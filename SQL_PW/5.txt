@@ -1,0 +1,39 @@
+import os
+import psycopg2
+params = {
+    "host": os.environ['APP_POSTGRES_HOST'],
+    "port": os.environ['APP_POSTGRES_PORT'],
+    "user": 'postgres'
+}
+conn = psycopg2.connect(**params)
+
+psycopg2.extensions.register_type(
+    psycopg2.extensions.UNICODE,
+    conn
+)
+conn.set_isolation_level(
+    psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT
+)
+cursor = conn.cursor()
+
+user_item_query_config = {
+    "MIN_USERS_FOR_ITEM": 10,
+    "MIN_ITEMS_FOR_USER": 3,
+    "MAX_ITEMS_FOR_USER": 50,
+    "MAX_ROW_NUMBER": 100000
+}
+sql_str = (
+        """
+            select * from pw_customers;
+        """ % user_item_query_config
+)
+
+cursor.execute(sql_str)
+ui_data = [a for a in cursor.fetchall()]
+conn.commit()
+
+agg_filename = '/home/user_AGG1.tsv'
+# создаём текстовый файл с результатами
+with open(agg_filename, 'w') as f:
+    for row in ui_data:
+        f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(row[0], row[1], row[2], row[3], row[4], row[5], row[6]))

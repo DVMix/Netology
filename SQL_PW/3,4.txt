@@ -1,0 +1,61 @@
+1) вывести список  всех покупателей
+select * from pw_customers;
+
+2) вывести список покупателей, у которых id=='1000000001'
+select * from pw_customers where cust_id = '1000000001';
+
+3) вывести список ТЦ расположенных не на территории USA
+select * from pw_vendors where vend_country <> 'USA';
+
+4) вывести список покупок John'а Smith'а
+select cust_contact, cust_city, prod_name 
+from pw_products join pw_orderitems as r1 on pw_products.prod_id=r1.prod_id join pw_orders as r2 on r1.order_num=r2.order_num join pw_customers as r3 on r2.cust_id=r3.cust_id
+where cust_contact = 'John Smith'; 
+
+5) Стоимость покупок John'а Smith'а
+select SUM(pw_products.prod_price) as stoim 
+from pw_products join pw_orderitems as r1 on pw_products.prod_id=r1.prod_id join pw_orders as r2 on r1.order_num=r2.order_num join pw_customers as r3 on r2.cust_id=r3.cust_id 
+group by cust_contact
+having cust_contact = 'John Smith'; 
+
+6) вывести список покупатлей , купивших более 4 единиц товара
+select cust_contact,  SUM(pw_products.prod_price) as stoim
+from pw_products join pw_orderitems as r1 on pw_products.prod_id=r1.prod_id join pw_orders as r2 on r1.order_num=r2.order_num join pw_customers as r3 on r2.cust_id=r3.cust_id
+group by 1
+having count(pw_products.prod_name)>4;
+
+7)список покупателей, у которых срежний чек больше  5.5
+select cust_contact, AVG(pw_products.prod_price) as stoim
+from pw_products join pw_orderitems as r1 on pw_products.prod_id=r1.prod_id join pw_orders as r2 on r1.order_num=r2.order_num join pw_customers as r3 on r2.cust_id=r3.cust_id
+group by 1
+having avg(pw_products.prod_price)>5.5;
+
+8) вывести список  покупателей и продукции , купленной в 'Bears R Us'
+select cust_contact, prod_name, vend_name
+from pw_products join pw_orderitems as r1 on pw_products.prod_id=r1.prod_id join pw_orders as r2 on r1.order_num=r2.order_num 
+join pw_customers as r3 on r2.cust_id=r3.cust_id join pw_vendors as r4 on pw_products.vend_id = r4.vend_id
+group by 1,2, r4.vend_name
+having vend_name = 'Bears R Us';
+
+9) пронумеровать список покупо по каждому покупателю
+select ROW_NUMBER() OVER (PARTITION BY cust_contact ORDER BY cust_contact DESC) as cust_rank, cust_contact, prod_name, vend_name
+from pw_products join pw_orderitems as r1 on pw_products.prod_id=r1.prod_id join pw_orders as r2 on r1.order_num=r2.order_num 
+join pw_customers as r3 on r2.cust_id=r3.cust_id join pw_vendors as r4 on pw_products.vend_id = r4.vend_id
+group by 2,3, r4.vend_name;
+
+10) процентное соотношение каждого товара к общей стоимости покупки
+select ROW_NUMBER() OVER (PARTITION BY cust_contact ORDER BY cust_contact DESC) as cust_rank, cust_contact, prod_name, prod_price, prod_price/SUM(prod_price) OVER (PARTITION BY cust_contact) as percentage
+from pw_products join pw_orderitems as r1 on pw_products.prod_id=r1.prod_id join pw_orders as r2 on r1.order_num=r2.order_num 
+join pw_customers as r3 on r2.cust_id=r3.cust_id join pw_vendors as r4 on pw_products.vend_id = r4.vend_id
+group by 2,3,4, r4.vend_name;
+
+
+показать всех покупателей
+CREATE VIEW V1
+as select * from pw_customers;
+
+стоимость покупки каждого посетителя
+CREATE VIEW V2
+as select cust_contact,  SUM(pw_products.prod_price) as stoim
+from pw_products join pw_orderitems as r1 on pw_products.prod_id=r1.prod_id join pw_orders as r2 on r1.order_num=r2.order_num join pw_customers as r3 on r2.cust_id=r3.cust_id
+group by 1

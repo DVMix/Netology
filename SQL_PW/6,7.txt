@@ -1,0 +1,57 @@
+import datetime
+import logging
+import os
+from subprocess import call
+
+import numpy as np
+import pandas as pd
+from sqlalchemy import create_engine
+
+
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+engine = create_engine('postgresql://postgres:@{}'.format(os.environ['APP_POSTGRES_HOST']))
+
+# загрузка данных из Postgres
+customers = pd.read_sql('SELECT * FROM pw_customers', engine)
+logger.info("Таблица покупателей")
+print(customers.head())
+
+orderitems = pd.read_sql('SELECT * FROM pw_orderitems', engine)
+logger.info("Таблица списков заказа")
+print(orderitems.head())
+
+orders = pd.read_sql('SELECT * FROM pw_orders', engine)
+logger.info("Таблица заказов")
+print(orders.head())
+
+products = pd.read_sql('SELECT * FROM pw_products', engine)
+logger.info("Таблица товаров")
+print(products.head())
+
+vendors = pd.read_sql('SELECT * FROM pw_vendors', engine)
+logger.info("Таблица ТЦ")
+print(vendors.head())
+
+
+#logger.info("Загрузили типы данных {}".format(ratings.dtypes))
+
+#1
+customers
+#2
+customers[customers.cust_id=='1000000001']
+#3
+vendors[vendors['vend_country']!='USA']
+#4
+task5 = products.merge(orderitems, left_on='prod_id', right_on='prod_id')
+task5 = task5.merge(orders, left_on='order_num', right_on='order_num')
+task5 = task5.merge(customers, left_on='cust_id', right_on='cust_id')
+top_customer = task5.groupby(by=['cust_contact']).size().reset_index(name='counts')
+top_customer[top_customer['counts']>4]
+#5
+avg_check = task5.groupby(by=['cust_contact'])['prod_price'].mean().reset_index(name='average')
+avg_check[avg_check['average']>5.5]
+logger.info("Загрузили типы данных {}".format(customers.dtypes))
+
+avg_check.to_csv('avg_check.csv')

@@ -1,0 +1,108 @@
+﻿-- Таблица ПОКУПАТЕЛЬ
+DROP TABLE IF EXISTS PW_Customers;
+CREATE TABLE PW_Customers
+(
+cust_id      char(10)  NOT NULL ,
+cust_name    char(15)  NOT NULL ,
+cust_address char(25)  NULL ,
+cust_city    char(15)  NULL ,
+cust_state   char(5)   NULL ,
+cust_country char(15)  NULL ,
+cust_contact char(25)  NULL
+);
+
+ALTER TABLE PW_Customers ADD PRIMARY KEY (cust_id);
+
+INSERT INTO PW_Customers VALUES('1000000001', 'Village Toys', '200 Maple Lane', 'Detroit', 'MI', 'USA', 'John Smith');
+INSERT INTO PW_Customers VALUES('1000000002', 'Kids Place', '333 South Lake Drive', 'Columbus', 'OH', 'USA', 'Michelle Green');
+INSERT INTO PW_Customers VALUES('1000000003', 'Fun4All', '1 Sunny Place', 'Muncie', 'IN', 'USA', 'Jim Jones');
+INSERT INTO PW_Customers VALUES('1000000004', 'Fun4All', '829 Riverside Drive', 'Phoenix', 'AZ',  'USA', 'Denise L. Stephens');
+INSERT INTO PW_Customers VALUES('1000000005', 'The Toy Store', '4545 53rd Street', 'Chicago', 'IL', 'USA', 'Kim Howard');
+
+-- Таблица ЛИСТ ЗАКАЗА
+DROP TABLE IF EXISTS PW_OrderItems;
+CREATE TABLE PW_OrderItems
+(
+  order_num  int          NOT NULL ,
+  order_item int          NOT NULL ,
+  prod_id    char(10)     NOT NULL ,
+  item_price decimal(8,2) NOT NULL 
+);
+ALTER TABLE PW_OrderItems ADD PRIMARY KEY (order_num, order_item);
+
+INSERT INTO PW_OrderItems VALUES(20005, 1, 'BR01', 5.49);
+INSERT INTO PW_OrderItems VALUES(20005, 2, 'BR03', 10.99);
+INSERT INTO PW_OrderItems VALUES(20006, 1, 'BR01', 5.99);
+INSERT INTO PW_OrderItems VALUES(20006, 2, 'BR02', 8.99);
+INSERT INTO PW_OrderItems VALUES(20006, 3, 'BR03', 11.99);
+INSERT INTO PW_OrderItems VALUES(20007, 1, 'BR03', 11.49);
+INSERT INTO PW_OrderItems VALUES(20007, 2, 'BNBG01', 2.99);
+INSERT INTO PW_OrderItems VALUES(20007, 3, 'BNBG02', 2.99);
+INSERT INTO PW_OrderItems VALUES(20007, 4, 'BNBG03', 2.99);
+INSERT INTO PW_OrderItems VALUES(20007, 5, 'RGAN01', 4.49);
+INSERT INTO PW_OrderItems VALUES(20008, 1, 'RGAN01', 4.99);
+INSERT INTO PW_OrderItems VALUES(20008, 2, 'BR03', 11.99);
+INSERT INTO PW_OrderItems VALUES(20008, 3, 'BNBG01', 3.49);
+INSERT INTO PW_OrderItems VALUES(20008, 4, 'BNBG02', 3.49);
+INSERT INTO PW_OrderItems VALUES(20008, 5, 'BNBG03', 3.49);
+INSERT INTO PW_OrderItems VALUES(20009, 1, 'BNBG01', 2.49);
+INSERT INTO PW_OrderItems VALUES(20009, 2, 'BNBG02', 2.49);
+INSERT INTO PW_OrderItems VALUES(20009, 3, 'BNBG03', 2.49);
+
+
+-- Таблица ЗАКАЗЫ
+DROP TABLE IF EXISTS PW_Orders;
+CREATE TABLE PW_Orders
+(
+  order_num  int      NOT NULL ,
+  cust_id    char(10) NOT NULL 
+);
+ALTER TABLE PW_Orders ADD PRIMARY KEY (order_num);
+
+INSERT INTO PW_Orders VALUES(20005, '1000000001');
+INSERT INTO PW_Orders VALUES(20006, '1000000003');
+INSERT INTO PW_Orders VALUES(20007, '1000000004');
+INSERT INTO PW_Orders VALUES(20008, '1000000005');
+INSERT INTO PW_Orders VALUES(20009, '1000000001');
+
+-- Таблица НАИМЕНОВАНИЕ ПРОДУКТОВ
+DROP TABLE IF EXISTS PW_Products;
+CREATE TABLE PW_Products
+(
+  prod_id    char(10)      NOT NULL ,
+  vend_id    char(10)      NOT NULL ,
+  prod_name  char(30)     NOT NULL ,
+  prod_price decimal(8,2)  NOT NULL
+);
+ALTER TABLE PW_Products ADD PRIMARY KEY (prod_id);
+
+INSERT INTO PW_Products VALUES('BR01', 'BRS01', '8 inch teddy bear', 5.99);
+INSERT INTO PW_Products VALUES('BR02', 'BRS01', '12 inch teddy bear', 8.99);
+INSERT INTO PW_Products VALUES('BR03', 'BRS01', '18 inch teddy bear', 11.99);
+INSERT INTO PW_Products VALUES('BNBG01', 'DLL01', 'Fish bean bag toy', 3.49);
+INSERT INTO PW_Products VALUES('BNBG02', 'DLL01', 'Bird bean bag toy', 3.49);
+INSERT INTO PW_Products VALUES('BNBG03', 'DLL01', 'Rabbit bean bag toy', 3.49);
+INSERT INTO PW_Products VALUES('RGAN01', 'DLL01', 'Raggedy Ann', 4.99);
+INSERT INTO PW_Products VALUES('RYL01', 'FNG01', 'King doll', 9.49);
+INSERT INTO PW_Products VALUES('RYL02', 'FNG01', 'Queen doll', 9.49);
+
+
+-- Таблица ТОРГОВЫЙ ЦЕНТР
+DROP TABLE IF EXISTS PW_Vendors;
+CREATE TABLE PW_Vendors
+(
+  vend_id      char(10) NOT NULL ,
+  vend_name    char(15) NOT NULL ,
+  vend_address char(15) NULL ,
+  vend_city    char(15) NULL ,
+  vend_state   char(5)  NULL ,
+  vend_country char(15) NULL 
+);
+ALTER TABLE PW_Vendors ADD PRIMARY KEY (vend_id);
+
+INSERT INTO PW_Vendors VALUES('BRS01','Bears R Us','123 Main Street','Bear Town','MI', 'USA');
+INSERT INTO PW_Vendors VALUES('BRE02','Bear Emporium','500 Park Street','Anytown','OH', 'USA');
+INSERT INTO PW_Vendors VALUES('DLL01','Doll House Inc.','555 High Street','Dollsville','CA', 'USA');
+INSERT INTO PW_Vendors VALUES('FRB01','Furball Inc.','1000 5th Avenue','New York','NY', 'USA');
+INSERT INTO PW_Vendors VALUES('FNG01','Fun and Games','42 Galaxy Road','London', NULL, 'England');
+INSERT INTO PW_Vendors VALUES('JTS01','Jouets et ours','1 Rue Amusement','Paris', NULL, 'France');
